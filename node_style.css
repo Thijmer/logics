@@ -1,0 +1,143 @@
+
+
+.node_body {
+    border-radius: 0px 0px 5px 5px;
+    z-index: 9;
+    background-color: #25242400;
+    border: 1px solid #3a3a3a;
+    text-align: center;
+    width: 100%;
+    resize: both;
+    overflow: auto;
+}
+
+.node_container {
+    border-radius: 5px;
+    position: absolute;
+    z-index: 9;
+    left:50%;
+    top:50%;
+    background-color: #2524248c;
+    border: 1px solid #3a3a3a;
+    text-align: center;
+    backdrop-filter: blur(3px);
+    white-space: nowrap;
+}
+
+.node_header {
+    border-radius: 5px 5px 0px 0px;
+    padding: 5px;
+    cursor: move;
+    z-index: 10;
+    background-color: #008cff;
+    color: #fff;
+    
+}
+
+.connector {
+    stroke:rgb(255, 255, 255);
+    stroke-width:2
+}
+
+#container {
+    position: absolute;
+    width: var(--workspacewidth);
+    height: var(--workspaceheight);
+    left: var(--workspacecenterx);
+    top: var(--workspacecentery);
+    background-color: #00000000;
+    overflow: hidden; /*For srcolling behavior*/
+    z-index: 0; /* Stay on bottom */
+    transform-origin: 50% 50%;
+}
+
+#container_container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow:hidden;
+  border-style: solid 1px;
+}
+
+
+#topmenu {
+    position: absolute;
+    backdrop-filter: blur(3px);
+    background-color: #2524248c;
+    width: 100%;
+    height: 50px;
+}
+
+
+
+/* The sidepanel menu */
+.sidepanel {
+    white-space: nowrap;
+    height: 100%; /* Specify a height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    overflow-y: scroll;
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+  }
+  
+  /* The sidepanel links */
+  .sidepanel a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #888;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .sidepanel a:hover {
+    color: #fff;
+  }
+  
+  /* Position and style the close button (top right corner) */
+  .sidepanel .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  
+  /* Style the button that is used to open the sidepanel */
+  .mainmenubtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #111;
+    color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+    height: 50px;
+  }
+  
+  .mainmenubtn:hover {
+    background-color: #444;
+  }
+  .mainmenubtnonlylogo {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #111;
+    color: white;
+    padding: 10px;
+    border: none;
+    height: 50px;
+    width: 50px;
+  }
+  
+  .mainmenubtnonlylogo:hover {
+    background-color: #444;
+  }

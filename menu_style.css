@@ -1,0 +1,117 @@
+
+
+/* The sidepanel menu */
+.sidepanel {
+    white-space: nowrap;
+    height: 100%; /* Specify a height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    overflow-y: scroll;
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+  }
+  
+  /* The sidepanel links */
+  .sidepanel a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #888;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .sidepanel a:hover {
+    color: #fff;
+  }
+  
+  /* Position and style the close button (top right corner) */
+  .sidepanel .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  
+  /* Style the button that is used to open the sidepanel */
+  .mainmenubtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #00000000;
+    color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+    height: 50px;
+  }
+
+  #topmenu {
+    position: absolute;
+    backdrop-filter: blur(3px);
+    background-color: #2524248c;
+    width: 100%;
+    height: 50px;
+    z-index: 1;
+}
+  
+  .mainmenubtn:hover {
+    background-color: #444;
+  }
+  .mainmenubtnonlylogo {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: rgba(17, 17, 17, 0);
+    color: white;
+    padding: 10px;
+    border: none;
+    height: 50px;
+    width: 50px;
+  }
+
+
+  /* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  background-color: #00000000;
+  z-index: 1; /* Stay on top */
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #35353586;
+  min-width: 150px;
+  border: 1px solid #3a3a3a;
+  border-radius: 5px;
+  z-index: 1;
+  backdrop-filter: blur(3px);
+  
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #aaa;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background-color: #000000;}
