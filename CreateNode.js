@@ -638,7 +638,7 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
 
 
 
-Logics_version = 1.2;
+Logics_version = 1.3;
 project_name = "Logics project";
 
 function makeFile() {

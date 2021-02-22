@@ -12,7 +12,6 @@ connectorVisualisation = true;
 connectorglow = false;
 nodelib_version = 1.00; //Version of nodelib, for compatibility check with old Logics saves.
 
-node_backdrop = "blur(3px)";
 zoom_factor = 1;
 
 
@@ -77,7 +76,6 @@ class Node {
         this.header.innerHTML = this.title;
         this.header.style.backgroundColor = this.titlecolor;
         
-        //this.header.appendChild(document.createTextNode(this.title));
         this.node_container.appendChild(this.header);
 
         this.body = document.createElement("div");
@@ -113,7 +111,7 @@ class Node {
 
         //Temporary delete button
         this.deletebtn = document.createElement("button");
-        this.deletebtn.innerHTML = "Delete node";
+        this.deletebtn.innerHTML = `Delete node`;
         this.body.appendChild(this.deletebtn);
         this.deletebtn.onclick = this.delete;
 
@@ -123,7 +121,6 @@ class Node {
         this.to_top(); //New nodes on top
 
         all_nodes.push(this);
-
 
 
 
@@ -149,9 +146,6 @@ class Node {
 
             this.output_elements["output" + index + "div"] = document.createElement("div");
             this.output_elements["output" + index + "div"].style.textAlign = "right";
-            //this.output_elements["output"+index+"input"] = document.createElement("input");
-            //this.output_elements["output"+index+"input"].type= "checkbox";
-            //this.output_elements["output"+index+"div"].appendChild(this.output_elements["output"+index+"input"]);
 
             this.output_elements["output" + index + "connector_circle"] = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             this.output_elements["output" + index + "connector_circle"].setAttribute("height", 15);
@@ -250,23 +244,12 @@ class Node {
         for (let index in this.outputs) {
             let output = this.outputs[index];
             this.output_elements["output" + index + "connector_coords"] = [this.node_container.offsetLeft + this.body.clientWidth + 2, this.node_container.offsetTop + this.output_elements["output" + index + "div"].offsetTop + 10];
-            //backgraph.innerHTML += `<circle cx="${this.output_elements["output"+index+"connector_coords"][0]}" cy="${this.output_elements["output"+index+"connector_coords"][1]}" r="10" fill="#f00" />`;// This was for testing purposes, so that I could see if the output circle locations were correct.
-            /*for (outpcoordnode of this.outputcoords_dependant_nodes) {
-                //Node.input_connections[] is a variable which contains data for each input socket about what it is connected to. [Output socket parent node, coords of the parent connector, parent node behaviour, node itself.]
-                for (x of this.outputcoords_dependant_nodes.input_connections) {
-                    if (this in x) {
-                        x[1] = [0, 0];
-                    }
-                }
-            }*/
-            //c[2].input_connections[c[0]] = [this.latestConnectorNumber, [this.output_elements["output"+this.latestConnectorNumber+"connector_coords"][0], this.output_elements["output"+this.latestConnectorNumber+"connector_coords"][1]], this.behaviour, this]; //[index, coords[x,y], parentbehaviour (In this case the behaviour of this instance), parent]
-
 
         }
         for (let index in this.inputs) {
             let input = this.inputs[index];
             this.input_elements["input" + index + "connector_coords"] = [this.node_container.offsetLeft+2, this.node_container.offsetTop + this.input_elements["input" + index + "div"].offsetTop + 10];
-            //backgraph.innerHTML += `<circle cx="${this.input_elements["input"+index+"connector_coords"][0]}" cy="${this.input_elements["input"+index+"connector_coords"][1]}" r="10" fill="#f00" />`;// This was for testing purposes, so that I could see if the output circle locations were correct.
+            
             input_connectors[this.id][index] = [index, [this.input_elements["input" + index + "connector_coords"][0], this.input_elements["input" + index + "connector_coords"][1]], this];
         }
     }
@@ -319,8 +302,8 @@ class Node {
         if (e.button != 0 && e.button != null) { //Dont register right clicks and stuff. Proceed if the grab behaviour is caused by something else than a mouse click: the G key.
             return false;
         }
-        this.pos3 = parseInt(e.clientX);
-        this.pos4 = parseInt(e.clientY);
+        this.pos3 = Number(e.clientX);
+        this.pos4 = Number(e.clientY);
         this.to_top();
         document.onmouseup = this.closeDragElement;
         document.onmousemove = this.elementDrag;
@@ -355,35 +338,30 @@ class Node {
     }
 
     initializeIndirectDragging(coords) {
-        this.pos3 = parseInt(coords[0]);
-        this.pos4 = parseInt(coords[1]);
+        this.pos3 = Number(coords[0]);
+        this.pos4 = Number(coords[1]);
         this.to_top();
     }
 
     elementDrag(e) { //Dragging the window. Executed on mouse movement, when dragging the window header.
         e = e || window.event;
-        this.pos1 = (this.pos3 - parseInt(e.clientX))*(1/zoom_factor);
-        this.pos2 = (this.pos4 - parseInt(e.clientY))*(1/zoom_factor);
-        this.pos3 = parseInt(e.clientX);
-        this.pos4 = parseInt(e.clientY);
+        this.pos1 = (this.pos3 - Number(e.clientX))*(1/zoom_factor);
+        this.pos2 = (this.pos4 - Number(e.clientY))*(1/zoom_factor);
+        this.pos3 = Number(e.clientX);
+        this.pos4 = Number(e.clientY);
         this.node_container.style.top = (this.node_container.offsetTop - this.pos2) + "px";
         this.node_container.style.left = (this.node_container.offsetLeft - this.pos1) + "px";
         this.getConnectorPositions();
         this.drawInputConnectorLines();
         this.requestParentDrawLines();
-        //Code for node selection. I'm not gonna make this now.
-        /*
-        for (x of selected_nodes.slice(selected_nodes.indexOf(this))) {
-            x.indirectDragging([this.pos1, this.pos2]);
-        }*/
     }
 
-    //Code for node selection. I'm not gonna make this now.
+
     indirectDragging(coords) { 
-        this.pos1 = this.pos3 - parseInt(coords[0]);
-        this.pos2 = this.pos4 - parseInt(coords[1]);
-        this.pos3 = parseInt(coords[0]);
-        this.pos4 = parseInt(coords[1]);
+        this.pos1 = this.pos3 - Number(coords[0]);
+        this.pos2 = this.pos4 - Number(coords[1]);
+        this.pos3 = Number(coords[0]);
+        this.pos4 = Number(coords[1]);
         this.node_container.style.top = (this.node_container.offsetTop - this.pos2) + "px";
         this.node_container.style.left = (this.node_container.offsetLeft - this.pos1) + "px";
         this.getConnectorPositions();
@@ -396,7 +374,7 @@ class Node {
         document.onmousemove = null;
     }
 
-    requestParentDrawLines(){ //Request to all nodes drawing lines to me: I have moved! please redraw your lines!
+    requestParentDrawLines(){ //Request to all nodes drawing lines to me: I have moved! Please redraw your lines!
         for (let x of this.outputcoords_dependant_nodes) {
             x.drawInputConnectorLines();
         }
@@ -415,12 +393,12 @@ class Node {
         this.connector = document.createElementNS("http://www.w3.org/2000/svg", "line");
 
         if (e.target.id == "") {
-            var connector_number = parseInt(e.target.parentElement.id.replace(`node${this.id}connector`, ""));
+            var connector_number = Number(e.target.parentElement.id.replace(`node${this.id}connector`, ""));
         } else {
-            var connector_number = parseInt(e.target.id.replace(`node${this.id}connector`, ""));
+            var connector_number = Number(e.target.id.replace(`node${this.id}connector`, ""));
         }
 
-        this.connectordragstartposition = [parseInt(e.pageX), parseInt(e.pageY)];
+        this.connectordragstartposition = [Number(e.pageX), Number(e.pageY)];
 
 
         this.connector.setAttribute("x1", this.output_elements["output" + connector_number + "connector_coords"][0]);
@@ -438,10 +416,10 @@ class Node {
     }
     connectorDrag(e) { //This function is called when the mouse moves while dragging the connector.
         e = e || window.event;
-        let differenceX = (parseInt(e.pageX)-this.connectordragstartposition[0])/zoom_factor;
-        let differenceY = (parseInt(e.pageY)-this.connectordragstartposition[1])/zoom_factor;
-        let cursorX = parseInt(this.connector.getAttribute("x1"))+differenceX;
-        let cursorY = parseInt(this.connector.getAttribute("y1"))+differenceY;
+        let differenceX = (Number(e.pageX)-this.connectordragstartposition[0])/zoom_factor;
+        let differenceY = (Number(e.pageY)-this.connectordragstartposition[1])/zoom_factor;
+        let cursorX = Number(this.connector.getAttribute("x1"))+differenceX;
+        let cursorY = Number(this.connector.getAttribute("y1"))+differenceY;
         let snapped = false //Connector snapping stuff
         for (let inputs_node_index in input_connectors) {
             let inputs_node = input_connectors[inputs_node_index];
@@ -469,8 +447,8 @@ class Node {
         this.connector.remove();
         this.body.classList.remove("noselect");
         //input_connectors [nodeIDnumber  [[ConnectorID, coords, object], [SecondInputConnectorID, coords, object]]
-        let x = parseInt(this.connector.getAttribute("x2"));//Coördinates of the place where the user stopped dragging the connector.
-        let y = parseInt(this.connector.getAttribute("y2"));
+        let x = Number(this.connector.getAttribute("x2"));//Coördinates of the place where the user stopped dragging the connector.
+        let y = Number(this.connector.getAttribute("y2"));
 
         //Loop through all the connectors to see if one is near enough to connect.
         for (let inputs_node_index in input_connectors) { //input_connectors is a global variable containing all the input connectors and their location.
@@ -535,7 +513,7 @@ class Node {
             if (x in this.input_connections) {
                 var data = this.input_connections[x][3].getNodeOutput()[this.input_connections[x][0]]
                 this.input_elements["input" + x + "input"].disabled = true;
-                if (data != undefined && data != "" && !isNaN(data)) {
+                if (data != undefined && data != "" && !isNaN(data) && data != Infinity) {
                     inpdatalist.push(data);
                 } else {
                     inpdatalist.push(0);
@@ -595,9 +573,9 @@ class Node {
 
     inputMouseDown(e) {
         if (e.target.id == "") {
-            var connector_number = parseInt(e.target.parentElement.id.replace(`node${this.id}inputconnector`, ""));
+            var connector_number = Number(e.target.parentElement.id.replace(`node${this.id}inputconnector`, ""));
         } else {
-            var connector_number = parseInt(e.target.id.replace(`node${this.id}inputconnector`, ""));
+            var connector_number = Number(e.target.id.replace(`node${this.id}inputconnector`, ""));
         }
         if (connector_number in this.input_connections) {
             delete (this.input_connections[connector_number]);
@@ -699,17 +677,17 @@ window.addEventListener("mousedown", e => {
         } else if (e.button == 1) {
             container.style.cursor = "grab";
             dragstartposition = [e.pageX, e.pageY]
-            gridstartposition = [parseInt(grid.getAttribute("x")), parseInt(grid.getAttribute("y"))];
+            gridstartposition = [Number(grid.getAttribute("x")), Number(grid.getAttribute("y"))];
             for (let nodeToMove of all_nodes) {
                 nodeToMove.pos1 = nodeToMove.node_container.offsetLeft;
                 nodeToMove.pos2 = nodeToMove.node_container.offsetTop;
-                nodeToMove.node_container.style["backdrop-filter"] = "";
             }
             window.onmousemove = function(e) {
-                let movedby = [parseInt(e.pageX-dragstartposition[0])*(1/zoom_factor), parseInt(e.pageY-dragstartposition[1])*(1/zoom_factor)];
+                let movedby = [Number(e.pageX-dragstartposition[0])*(1/zoom_factor), Number(e.pageY-dragstartposition[1])*(1/zoom_factor)];
                 for (let nodeToMove of all_nodes) {
-                    nodeToMove.node_container.style.left = parseInt(movedby[0]+nodeToMove.pos1).toString()+"px";
-                    nodeToMove.node_container.style.top = parseInt(movedby[1]+nodeToMove.pos2).toString()+"px";
+                    nodeToMove.node_container.style.left = Number(movedby[0]+nodeToMove.pos1).toString()+"px";
+                    nodeToMove.node_container.style.top = Number(movedby[1]+nodeToMove.pos2).toString()+"px";
+                } for (let nodeToMove of all_nodes) { //apart from the statement above to make the lines move with the nodes, instead of having some behind.
                     nodeToMove.getConnectorPositions();
                     nodeToMove.drawInputConnectorLines();
                 }
@@ -723,10 +701,6 @@ window.addEventListener("mousedown", e => {
                 window.onmouseup = null;
                 window.onmousemove = null;
                 container.style.cursor = "auto";
-                for (let nodeToBackdropRestore of all_nodes) {
-                    nodeToBackdropRestore.node_container.style["backdrop-filter"] = node_backdrop;
-
-                }
                 
             }
         }
@@ -796,9 +770,36 @@ container.onwheel = function(e) { //Disabled until answer to the zoom question o
     zoom_factor += zoomedinby;
     if (! (zoom_factor >= .2)) {
         zoom_factor = .2;
+    } else if (zoom_factor > 4) {
+        zoom_factor = 4;
     }
     //Zoom in/out
     container.style["transform-origin"] = "50% 50%"
     let offset_transform = 100/(zoom_factor)//(zoom_factor-1)*100;
     container.style.transform = `scale(${zoom_factor})`;
+}
+
+
+//This program works better on some browsers than on others. 
+if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) {
+        //alert('Opera');
+    } else if(navigator.userAgent.indexOf("Chrome") != -1 ) {
+        //alert('Chrome');
+    } else if(navigator.userAgent.indexOf("Safari") != -1) {
+        alert('This application is made for and tested on Chromium. This is Safari, and the software may not work properly on this browser. If you want the best experience, please install a Chromium based browser such as Google Chrome or Opera. Or you can just continue, if you\'d rather do that.');
+    } else if(navigator.userAgent.indexOf("Firefox") != -1 ) {
+        alert('This application is made for and tested on Chromium. This is Firefox, and the software may not work properly on this browser. If you want the best experience, please install a Chromium based browser such as Google Chrome or Opera. Or you can just continue, if you\'d rather do that.');
+    } else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) {
+        alert('This application is made for and tested on Chromium. This is Internet Explorer, and the software may not work properly on this browser. If you want the best experience, please install a Chromium based browser such as Google Chrome or Opera. Or you can just continue, if you\'d rather do that.');
+    }  
+
+{ //And it doens't even work on phones. (due to the onmousedown and onmousemove events)
+    let mobileCheck = function() {
+        let check = false;
+        (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+        return check;
+    };
+    if (mobileCheck()) {
+        alert("This webapp does NOT work on mobile devices. If you want to use this app, please run it on a Chromium based browser on a windows/mac/linux computer.")
+    }
 }
