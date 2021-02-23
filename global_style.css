@@ -33,6 +33,14 @@ p, span, h3, h2, h1, a, li{
     
 }
 
+h1 {
+  font-size: 26px;
+}
+
+a {
+  font-size: 20px;
+}
+
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
       -webkit-user-select: none; /* Safari */
@@ -42,3 +50,5 @@ p, span, h3, h2, h1, a, li{
               user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
   }
+
+

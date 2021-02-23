@@ -116,7 +116,10 @@ class Node {
         this.deletebtn.onclick = this.delete;
 
         this.pos1 = 0; this.pos2 = 0; this.pos3 = 0; this.pos4 = 0; //variables for the window dragging behaviour
+        
         this.header.onmousedown = this.dragMouseDown;
+        
+        
 
         this.to_top(); //New nodes on top
 
@@ -153,7 +156,10 @@ class Node {
             var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             circle.setAttribute("cx", 5);
             circle.setAttribute("cy", 10);
+            
             circle.setAttribute("r", 5);
+            
+            
             if (output[0] == "boolean")
                 circle.setAttribute("fill", "#0f0");
             else if (output[0] == "number")
@@ -297,16 +303,22 @@ class Node {
     }
 
     //Add dragg behaviour
-    dragMouseDown(e) { //*Starts dragging the window noises*
+    dragMouseDown(e) { //*Starts dragging the node noises*
         e = e || window.event;
         if (e.button != 0 && e.button != null) { //Dont register right clicks and stuff. Proceed if the grab behaviour is caused by something else than a mouse click: the G key.
             return false;
         }
+
         this.pos3 = Number(e.clientX);
         this.pos4 = Number(e.clientY);
+        
+        
         this.to_top();
+
         document.onmouseup = this.closeDragElement;
         document.onmousemove = this.elementDrag;
+        
+        
 
         //Code for node selection.
         
@@ -345,10 +357,18 @@ class Node {
 
     elementDrag(e) { //Dragging the window. Executed on mouse movement, when dragging the window header.
         e = e || window.event;
-        this.pos1 = (this.pos3 - Number(e.clientX))*(1/zoom_factor);
-        this.pos2 = (this.pos4 - Number(e.clientY))*(1/zoom_factor);
-        this.pos3 = Number(e.clientX);
-        this.pos4 = Number(e.clientY);
+        if (e.type === "touchmove") {
+            this.pos1 = (this.pos3 - Number(e.touches[0].clientX))*(1/zoom_factor);
+            this.pos2 = (this.pos4 - Number(e.touches[0].clientY))*(1/zoom_factor);
+            this.pos3 = Number(e.touches[0].clientX);
+            this.pos4 = Number(e.touches[0].clientY);
+        } else {
+            this.pos1 = (this.pos3 - Number(e.clientX))*(1/zoom_factor);
+            this.pos2 = (this.pos4 - Number(e.clientY))*(1/zoom_factor);
+            this.pos3 = Number(e.clientX);
+            this.pos4 = Number(e.clientY);
+        }
+        
         this.node_container.style.top = (this.node_container.offsetTop - this.pos2) + "px";
         this.node_container.style.left = (this.node_container.offsetLeft - this.pos1) + "px";
         this.getConnectorPositions();
@@ -357,17 +377,6 @@ class Node {
     }
 
 
-    indirectDragging(coords) { 
-        this.pos1 = this.pos3 - Number(coords[0]);
-        this.pos2 = this.pos4 - Number(coords[1]);
-        this.pos3 = Number(coords[0]);
-        this.pos4 = Number(coords[1]);
-        this.node_container.style.top = (this.node_container.offsetTop - this.pos2) + "px";
-        this.node_container.style.left = (this.node_container.offsetLeft - this.pos1) + "px";
-        this.getConnectorPositions();
-        this.drawInputConnectorLines();
-        this.requestParentDrawLines();
-    }
 
     closeDragElement() { //We're done dragging the window. yee!
         document.onmouseup = null;
@@ -390,16 +399,17 @@ class Node {
         this.to_top();
         document.onmousemove = this.connectorDrag;
         document.onmouseup = this.connectorCloseDrag;
+        
+        
         this.connector = document.createElementNS("http://www.w3.org/2000/svg", "line");
 
         if (e.target.id == "") {
-            var connector_number = Number(e.target.parentElement.id.replace(`node${this.id}connector`, ""));
+            var connector_number = parseInt(e.target.parentElement.id.replace(`node${this.id}connector`, ""));
         } else {
-            var connector_number = Number(e.target.id.replace(`node${this.id}connector`, ""));
+            var connector_number = parseInt(e.target.id.replace(`node${this.id}connector`, ""));
         }
 
         this.connectordragstartposition = [Number(e.pageX), Number(e.pageY)];
-
 
         this.connector.setAttribute("x1", this.output_elements["output" + connector_number + "connector_coords"][0]);
         this.connector.setAttribute("y1", this.output_elements["output" + connector_number + "connector_coords"][1]);
@@ -416,8 +426,10 @@ class Node {
     }
     connectorDrag(e) { //This function is called when the mouse moves while dragging the connector.
         e = e || window.event;
+        
         let differenceX = (Number(e.pageX)-this.connectordragstartposition[0])/zoom_factor;
         let differenceY = (Number(e.pageY)-this.connectordragstartposition[1])/zoom_factor;
+        
         let cursorX = Number(this.connector.getAttribute("x1"))+differenceX;
         let cursorY = Number(this.connector.getAttribute("y1"))+differenceY;
         let snapped = false //Connector snapping stuff
@@ -618,7 +630,9 @@ pressed_keys = [];
 window.addEventListener("keydown", e => {
     if (!pressed_keys.includes(e.code)) {
         pressed_keys.push(e.code);
+        if (e.code == "KeyS" && platform == "firefox") {pressed_keys.push("ShiftLeft")}
     }
+    console.log(e.code);
 
 });
 
@@ -626,6 +640,7 @@ window.addEventListener("keyup", e => {
     //Maintain a list with all pressed keys at the moment: keydown
     if (pressed_keys.includes(e.code)) {
         pressed_keys.splice(pressed_keys.indexOf(e.code), 1);
+        if (e.code == "KeyS" && platform == "firefox") {pressed_keys.splice(pressed_keys.indexOf("ShiftLeft"), 1)}
     }
 
     //Node deleting using X or delete button
@@ -709,7 +724,36 @@ window.addEventListener("mousedown", e => {
 });
 
 
+container.ontouchstart = function(e) {
+    container.style.cursor = "grab";
+    dragstartposition = [e.touches[0].pageX, e.touches[0].pageY]
+    gridstartposition = [Number(grid.getAttribute("x")), Number(grid.getAttribute("y"))];
+    for (let nodeToMove of all_nodes) {
+        nodeToMove.pos1 = nodeToMove.node_container.offsetLeft;
+        nodeToMove.pos2 = nodeToMove.node_container.offsetTop;
+    }
+    window.ontouchmove = function(e) {
+        e.preventDefault();
+        let movedby = [Number(e.touches[0].pageX-dragstartposition[0])*(1/zoom_factor), Number(e.touches[0].pageY-dragstartposition[1])*(1/zoom_factor)];
+        for (let nodeToMove of all_nodes) {
+            nodeToMove.node_container.style.left = Number(movedby[0]+nodeToMove.pos1).toString()+"px";
+            nodeToMove.node_container.style.top = Number(movedby[1]+nodeToMove.pos2).toString()+"px";
+        } for (let nodeToMove of all_nodes) { //apart from the statement above to make the lines move with the nodes, instead of having some behind.
+            nodeToMove.getConnectorPositions();
+            nodeToMove.drawInputConnectorLines();
+        }
+        let grid = document.getElementById("grid");
+        grid.setAttribute("x", gridstartposition[0]+movedby[0]);
+        grid.setAttribute("y", gridstartposition[1]+movedby[1]);
+    }
 
+    window.ontouchend = function() {
+        window.ontouchend = null;
+        window.ontouchmove = null;
+        container.style.cursor = "auto";
+    }
+
+}
 
 
 output_nodes = []; //used for updating. Push 'this' to the list and 'this.update' will be executed.
@@ -762,8 +806,18 @@ container.onwheel = function(e) { //Disabled until answer to the zoom question o
     e.preventDefault();
 
     let oldzoom = zoom_factor;
-    if (e.deltaY != 0) {
-        var zoomedinby = zoom_factor*-6/e.deltaY;
+    let deltaY = e.deltaY;
+    if (/*platform == "firefox" | platform == "safari"*/true) { //Helps with weirdness with touchpad scrolling in Chromium as well.
+        if (deltaY > 0) {
+            deltaY = 53;
+        }
+        else if (deltaY < 0) {
+            deltaY = -53;
+        }
+    }
+
+    if (deltaY != 0) {
+        var zoomedinby = zoom_factor*-6/deltaY;
     } else {
         zoomedinby = 0;
     }
@@ -780,16 +834,22 @@ container.onwheel = function(e) { //Disabled until answer to the zoom question o
 }
 
 
+
+
+platform = "unknown";
+mobile = false;
 //This program works better on some browsers than on others. 
 if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) {
-        //alert('Opera');
+        platform = "chromium";
     } else if(navigator.userAgent.indexOf("Chrome") != -1 ) {
-        //alert('Chrome');
+        platform = "chromium";
     } else if(navigator.userAgent.indexOf("Safari") != -1) {
+        platform = "safari";
         alert('This application is made for and tested on Chromium. This is Safari, and the software may not work properly on this browser. If you want the best experience, please install a Chromium based browser such as Google Chrome or Opera. Or you can just continue, if you\'d rather do that.');
     } else if(navigator.userAgent.indexOf("Firefox") != -1 ) {
-        alert('This application is made for and tested on Chromium. This is Firefox, and the software may not work properly on this browser. If you want the best experience, please install a Chromium based browser such as Google Chrome or Opera. Or you can just continue, if you\'d rather do that.');
+        platform = "firefox";        
     } else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) {
+        platform = "IE";
         alert('This application is made for and tested on Chromium. This is Internet Explorer, and the software may not work properly on this browser. If you want the best experience, please install a Chromium based browser such as Google Chrome or Opera. Or you can just continue, if you\'d rather do that.');
     }  
 
@@ -800,6 +860,7 @@ if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) 
         return check;
     };
     if (mobileCheck()) {
-        alert("This webapp does NOT work on mobile devices. If you want to use this app, please run it on a Chromium based browser on a windows/mac/linux computer.")
+        mobile = true;
+        alert("This webapp is not intended for mobile devices. You are able to scroll around in the network and interact with nodes, you cannot edit the network on a mobile device.")
     }
 }

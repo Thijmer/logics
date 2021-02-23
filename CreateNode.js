@@ -9,8 +9,35 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
     }
     if (type == "checkbox") {
         if (standards.checked == null) {standards.checked = false};
-        var n = new Node("Input node", "#0f0", [], [["boolean", "Output"]], `<input type="checkbox" id="node${node_id}checkbox" style="width:100px; height:100px;" />`, behaviour=function(outputslot) {return [document.getElementById(`node${this.id}checkbox`).checked]}, null, coords);
-        document.getElementById(`node${n.id}checkbox`).checked = standards.checked;
+        if (platform != "firefox" && platform != "safari") {
+            var n = new Node("Input node", "#0f0", [], [["boolean", "Output"]], `
+        <input type="checkbox" id="node${node_id}checkbox" style="width:100px; height:100px;" />`, behaviour=function(outputslot) {return [document.getElementById(`node${this.id}checkbox`).checked]}, null, coords);
+            document.getElementById(`node${n.id}checkbox`).checked = standards.checked;
+        } else {
+            var n = new Node("Input node", "#0f0", [], [["boolean", "Output"]], `
+        <div class="checkbox_firefox_div" id="node${node_id}checkdiv" onclick=
+            'document.getElementById("node${node_id}checkbox").checked = !document.getElementById("node${node_id}checkbox").checked;
+            document.getElementById("node${node_id}checkdiv").classList.toggle("checkbox_firefox_div_checked");
+            document.getElementById("node${node_id}checkdiv").classList.toggle("checkbox_firefox_div");
+            let svg = document.getElementById("node${node_id}svg");
+            if (svg.style.display === "none") {
+                svg.style.display = "block";
+            } else {
+                svg.style.display = "none";
+            }    '>
+        <svg width="100" height="100" style="display: none;" id="node${node_id}svg">
+            <line x1="20" y1="50" x2="50" y2="80" stroke-width="20" stroke="#ffffff" />
+            <line x1="40" y1="80" x2="80" y2="20" stroke-width="20" stroke="#ffffff" />
+        </svg>
+        
+        </div><input type="checkbox" id="node${node_id}checkbox" style="width:100px; height:100px; visibility:hidden;" />`, behaviour=function(outputslot) {return [document.getElementById(`node${this.id}checkbox`).checked]}, initscript=function() {
+
+            }, coords);
+            if (standards.checked) {
+                document.getElementById(`node${n.id}checkdiv`).dispatchEvent(new Event("click"));
+            }
+        }
+        
     } if (type == "color input") {
         if (standards.color == null) {standards.color = "#ffbc03"};
         var n = new Node("Input node", "#0f0", [], [["number", "Red"], ["number", "Green"], ["number", "Blue"]],
@@ -638,7 +665,7 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
 
 
 
-Logics_version = 1.3;
+Logics_version = 1.4;
 project_name = "Logics project";
 
 function makeFile() {

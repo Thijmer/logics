@@ -1,0 +1,33 @@
+.checkbox_firefox_div {
+    width:100px;
+    height:100px;
+    background-color: #ffffff;
+    position:absolute;
+    left:10px;
+    top:35px;
+}
+
+.checkbox_firefox_div:hover {
+    background-color: #d3d3d3;
+}
+
+.checkbox_firefox_div:active {
+    background-color: #008cff;
+}
+
+.checkbox_firefox_div_checked {
+    width:100px;
+    height:100px;
+    background-color: #008cff;
+    position:absolute;
+    left:10px;
+    top:35px;
+}
+
+.checkbox_firefox_div_checked:hover {
+    background-color: #005296;
+}
+
+.checkbox_firefox_div_checked:active {
+    background-color: #008cff;
+}
