@@ -8,11 +8,12 @@ Logics is a program that lets you visualize mathematical formulas by building as
 # Explaination
 Nodes make up a network and are resembled as squares with a UI in them. They are connected using wires that transmit data.
 Nodes perform an operation to the data, such as addition or converting a number to binary.
-The data comes in on the left side of the node and comes out on the right side.
+The data comes in on the left side of the node and comes out on the right side. There are three types of nodes: Input nodes, operation nodes and output nodes.
+Input nodes are ment to put variable values into the network. Output nodes are ment to display the value coming out of the network. Operation nodes take data, modify it and pass it on to the next node.
 Zooming in and out and moving the viewport is also possible, allowing for networks much larger than your screen!
 
 # Limitations
- - This webapp only does not work on mobile devices and has some compatibility issues with non-chromium-based browsers, but is still usable on them.
+ - This webapp lets you scroll around and click things on touchscreen devices, but it doesn't let you edit the network or zoom.
  - A node has a fixed number of input/output sockets. An addition node can add just two numbers, and  you have to chain them together if you want to add more numbers.
 
 # Nodes in Logics
