@@ -15,6 +15,7 @@ Zooming in and out and moving the viewport is also possible, allowing for networ
 # Limitations
  - This webapp lets you scroll around and click things on touchscreen devices, but it doesn't let you edit the network or zoom.
  - A node has a fixed number of input/output sockets. An addition node can add just two numbers, and  you have to chain them together if you want to add more numbers.
+ - A node can not feed into itself. I'm working on making it possible to let nodes feed into themselves, which could have some cool implications.
 
 # Nodes in Logics
 ### Input nodes
