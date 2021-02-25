@@ -132,6 +132,7 @@ class Node {
         this.current_tick_calloutput = {}; //Stores the outcome of the network for this node in the current "tick", so that 10 output nodes connected to one node with a node network before it, don't all call the whole network.
         this.previous_tick_calloutput = {}; //For recursive networks
         this.previous_tick = current_tick;
+        this.recursive = false;
 
 
 
@@ -502,12 +503,7 @@ class Node {
             }
         }
 
-        
-        
-
         this.updateIsRecursive();
-        /*console.log(this.recursive);
-        console.log(this.outputcoords_dependant_nodes);*/
 
     }
 
@@ -560,11 +556,13 @@ class Node {
 
     getInputData() {
         var inpdatalist = []
+        
         for (var x in this.inputs) {
             if (x in this.input_connections) {
-
-                if (!this.recursive) {
+                
+                if (this.recursive == false) {
                     var data = this.input_connections[x][3].getNodeOutput()[this.input_connections[x][0]];
+                    
                 } else {
                     let childnodespreviousoutput = this.input_connections[x][3].previous_tick_calloutput[current_network_call];
 
@@ -615,7 +613,6 @@ class Node {
                         }
                     }
                 }
-
                 
 
 
@@ -858,7 +855,7 @@ live_data_nodes = [];
 
 
 
-
+intervalcounter = 0;
 window.setInterval(function () {
     current_tick = !current_tick;
     for (x of output_nodes) {
@@ -869,24 +866,29 @@ window.setInterval(function () {
         x.getNodeOutput();
         recursive_nodes_to_calculate.splice(recursive_nodes_to_calculate.indexOf(x), 1);
     }
-}, 10);
-window.setInterval(function () {
-    if (live_data_nodes_update) {
-        for (let x of live_data_nodes) {
-            x.update();
-        }
-    }
-}, 500);
 
-window.setInterval(function () {
-    if (connectorVisualisation) {
-        for (let x of all_nodes) {
-            if (x.outputcoords_dependant_nodes.length == 0 | x.recursive) {
+    if (intervalcounter%50 == 0) {
+        if (live_data_nodes_update) {
+            for (let x of live_data_nodes) {
                 x.update();
             }
         }
     }
-}, 100);
+    if (intervalcounter%10 ==0) {
+        if (connectorVisualisation) {
+            for (let x of all_nodes) {
+                if (x.outputcoords_dependant_nodes.length == 0) {
+                    x.update();
+                }
+            }
+        }
+    }
+
+    if (intervalcounter/1000 > 1) {
+        intervalcounter = 0
+    }
+}, 10);
+
 
 function uniq(a) {
     var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
