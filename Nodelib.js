@@ -505,7 +505,7 @@ class Node {
         
         
 
-        if (ScanNetworkUp.call(this, this) === "Recursive") {this.recursive = true} else {this.recursive = false}; //Is the network recursive?
+        this.updateIsRecursive();
         /*console.log(this.recursive);
         console.log(this.outputcoords_dependant_nodes);*/
 
@@ -526,6 +526,20 @@ class Node {
                 this.connector_lines[index].setAttribute("y2", y);
             }
 
+        }
+    }
+
+    updateIsRecursive() { //Determine if this node is in a recursive relationship and update this.recursive.
+        let old_recursive = this.recursive;
+        if (ScanNetworkUp.call(this, this) === "Recursive") {this.recursive = true} else {this.recursive = false}; //Is the network recursive?
+        if (old_recursive != this.recursive) {
+            for (let x in this.input_connections) {
+                let inpc = this.input_connections[x];
+                inpc[3].updateIsRecursive();
+            }
+            for (let x of this.outputcoords_dependant_nodes) {
+                x.updateIsRecursive();
+            }
         }
     }
 
@@ -555,7 +569,6 @@ class Node {
                     let childnodespreviousoutput = this.input_connections[x][3].previous_tick_calloutput[current_network_call];
 
                     if (childnodespreviousoutput == null) {
-                        console.log("Reeee");
                         childnodespreviousoutput = new Array(128).fill(0);
                         
                     }
@@ -571,20 +584,39 @@ class Node {
                 } else {
                     inpdatalist.push(0);
                 }
-                if (connectorVisualisation) {
-                    if (data) {
-                        this.connector_lines[x].style['stroke-width'] = 4;
-                        this.connector_lines[x].style['stroke'] = "#f80";
-                        if (connectorglow)
-                            this.connector_lines[x].setAttribute("filter", "url(#glowconnector)");
-                        else
+                if (this.recursive && this.input_connections[x][3].recursive) {
+                    if (connectorVisualisation) {
+                        if (data) {
+                            this.connector_lines[x].style['stroke-width'] = 4;
+                            this.connector_lines[x].style['stroke'] = "#0f0";
+                            if (connectorglow)
+                                this.connector_lines[x].setAttribute("filter", "url(#glowconnector)");
+                            else
+                                this.connector_lines[x].setAttribute("filter", "");
+                        } else {
+                            this.connector_lines[x].style['stroke-width'] = 2;
+                            this.connector_lines[x].style['stroke'] = "#0a0";
                             this.connector_lines[x].setAttribute("filter", "");
-                    } else {
-                        this.connector_lines[x].style['stroke-width'] = 2;
-                        this.connector_lines[x].style['stroke'] = "#fff";
-                        this.connector_lines[x].setAttribute("filter", "");
+                        }
+                    }
+                } else {
+                    if (connectorVisualisation) {
+                        if (data) {
+                            this.connector_lines[x].style['stroke-width'] = 4;
+                            this.connector_lines[x].style['stroke'] = "#f80";
+                            if (connectorglow)
+                                this.connector_lines[x].setAttribute("filter", "url(#glowconnector)");
+                            else
+                                this.connector_lines[x].setAttribute("filter", "");
+                        } else {
+                            this.connector_lines[x].style['stroke-width'] = 2;
+                            this.connector_lines[x].style['stroke'] = "#fff";
+                            this.connector_lines[x].setAttribute("filter", "");
+                        }
                     }
                 }
+
+                
 
 
             } else {
@@ -658,7 +690,7 @@ class Node {
                 }
             }
             if (remove_outputcoordsdependant_node) {connection[3].outputcoords_dependant_nodes.splice(connection[3].outputcoords_dependant_nodes.indexOf(this), 1)}
-
+            this.updateIsRecursive();
         }
     }
 
@@ -832,12 +864,13 @@ window.setInterval(function () {
     for (x of output_nodes) {
         x.update();
     }
+    recursive_nodes_to_calculate = uniq(recursive_nodes_to_calculate);
     for (x of recursive_nodes_to_calculate) {
         x.getNodeOutput();
         recursive_nodes_to_calculate.splice(recursive_nodes_to_calculate.indexOf(x), 1);
     }
 }, 10);
-/*window.setInterval(function () {
+window.setInterval(function () {
     if (live_data_nodes_update) {
         for (let x of live_data_nodes) {
             x.update();
@@ -848,12 +881,12 @@ window.setInterval(function () {
 window.setInterval(function () {
     if (connectorVisualisation) {
         for (let x of all_nodes) {
-            if (x.outputcoords_dependant_nodes.length == 0) {
+            if (x.outputcoords_dependant_nodes.length == 0 | x.recursive) {
                 x.update();
             }
         }
     }
-}, 100);*/
+}, 100);
 
 function uniq(a) {
     var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
