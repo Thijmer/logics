@@ -792,12 +792,13 @@ function loadFile(datastr) {
     }
 
 
-    for (let x of all_nodes) {
-        x.getConnectorPositions();
+    for (let node of all_nodes) {
+        node.getConnectorPositions();
     }
 
     for (let node of all_nodes) {
         node.drawInputConnectorLines();
+        node.updateIsRecursive()
     }
 }
 
