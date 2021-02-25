@@ -7,6 +7,7 @@ selected_nodes = [];
 output_nodes = [];
 latest_nodes = [];
 input_connectors = {};
+recursive_nodes_to_calculate = []; //List of recursive nodes that should get calculated in next tick
 live_data_nodes_update = true;
 connectorVisualisation = true;
 connectorglow = false;
@@ -15,7 +16,7 @@ nodelib_version = 1.00; //Version of nodelib, for compatibility check with old L
 zoom_factor = 1;
 
 current_network_call = "main"; //Multiple network states call states will be introduced in the future.
-current_frame = 0;
+current_tick = 0;
 
 
 { /*Made by Thijmen Voskuilen. See the about tab on this webpage for contact info.*/
@@ -128,9 +129,9 @@ class Node {
 
         all_nodes.push(this);
 
-        this.current_frame_calldata = {}; //Stores the outcome of the network for this node in the current "frame", so that 10 output nodes connected to one node with a node network before it, don't all call the whole network.
-        this.previous_frame_calldata = {}; //For recursive networks
-        this.previous_frame = current_frame;
+        this.current_tick_calloutput = {}; //Stores the outcome of the network for this node in the current "tick", so that 10 output nodes connected to one node with a node network before it, don't all call the whole network.
+        this.previous_tick_calloutput = {}; //For recursive networks
+        this.previous_tick = current_tick;
 
 
 
@@ -471,7 +472,7 @@ class Node {
         //Loop through all the connectors to see if one is near enough to connect.
         for (let inputs_node_index in input_connectors) { //input_connectors is a global variable containing all the input connectors and their location.
             let inputs_node = input_connectors[inputs_node_index];
-            for (var c of inputs_node) {
+            for (let c of inputs_node) {
                 if (x - 1 < c[1][0] && c[1][0] < x + 1 && y - 1 < c[1][1] && c[1][1] < y + 1) { //Is it near enough to connect? Yes: Proceed with the connection. No? Cancel the connection and act like it never happened.
                     //Tell the node we're connecting to which input from which node (THIS ONE) is connecting, where it is and what its behaviour is. []
                     //Child node means the node the output is from.
@@ -483,26 +484,30 @@ class Node {
                     if (!this.outputcoords_dependant_nodes.includes(c[2])) { //The new parent needs to know where I am at every time, so that he can draw the line.
                         this.outputcoords_dependant_nodes.push(c[2]);
                     }
+
+                    if (connectiontoremove != null) {
+                        let remove_outputcoordsdependant_node = true;
+                        for (let inpnodeindex in c[2].input_connections) {
+                            let inpnode = c[2].input_connections[inpnodeindex];
+                            if (inpnode[3] === connectiontoremove[3]) {
+                                remove_outputcoordsdependant_node = false;
+                            }
+                        }
+                        if (remove_outputcoordsdependant_node) {connectiontoremove[3].outputcoords_dependant_nodes.splice(connectiontoremove[3].outputcoords_dependant_nodes.indexOf(connectiontoremove[3]))}
+                        
+                    }
+
                     break;
                 };
             }
         }
 
-        if (connectiontoremove != null) {
-            let remove_outputcoordsdependant_node = true;
-            for (let inpnodeindex in c[2].input_connections) {
-                let inpnode = c[2].input_connections[inpnodeindex];
-                if (inpnode[3] === connectiontoremove[3]) {
-                    remove_outputcoordsdependant_node = false;
-                }
-            }
-            if (remove_outputcoordsdependant_node) {connectiontoremove[3].outputcoords_dependant_nodes.splice(connectiontoremove[3].outputcoords_dependant_nodes.indexOf(connectiontoremove[3]))}
-            
-        }
+        
         
 
         if (ScanNetworkUp.call(this, this) === "Recursive") {this.recursive = true} else {this.recursive = false}; //Is the network recursive?
-        
+        /*console.log(this.recursive);
+        console.log(this.outputcoords_dependant_nodes);*/
 
     }
 
@@ -536,16 +541,30 @@ class Node {
                 this.connector_lines[x].setAttribute("y2", this.input_elements["input" + x + "connector_coords"][1]);
                 this.input_elements["input" + x + "input"].disabled = false;
             }
-
         }
-
     }
 
     getInputData() {
         var inpdatalist = []
         for (var x in this.inputs) {
             if (x in this.input_connections) {
-                var data = this.input_connections[x][3].getNodeOutput()[this.input_connections[x][0]]
+
+                if (!this.recursive) {
+                    var data = this.input_connections[x][3].getNodeOutput()[this.input_connections[x][0]];
+                } else {
+                    let childnodespreviousoutput = this.input_connections[x][3].previous_tick_calloutput[current_network_call];
+
+                    if (childnodespreviousoutput == null) {
+                        console.log("Reeee");
+                        childnodespreviousoutput = new Array(128).fill(0);
+                        
+                    }
+                    var data = childnodespreviousoutput[this.input_connections[x][0]];
+                    recursive_nodes_to_calculate.push(this.input_connections[x][3])
+                }
+                
+
+
                 this.input_elements["input" + x + "input"].disabled = true;
                 if (data != undefined && data != "" && !isNaN(data) && data != Infinity) {
                     inpdatalist.push(data);
@@ -602,16 +621,16 @@ class Node {
     }
 
     getNodeOutput() { //Returns the node output
-        if (this.previous_frame != current_frame) {
-            this.current_frame_calldata = {};
-            this.previous_frame = current_frame;
+        if (this.previous_tick != current_tick) {
+            this.current_tick_calloutput = {};
+            this.previous_tick = current_tick;
         }
-        if (this.current_frame_calldata[current_network_call] != null) { //Make sure that the network before this node is only called once.
-            return this.current_frame_calldata[current_network_call];
+        if (this.current_tick_calloutput[current_network_call] != null) { //Make sure that the network before this node is only called once.
+            return this.current_tick_calloutput[current_network_call];
         } else {
-            this.previous_frame_calldata = this.current_frame_calldata;
-            this.current_frame_calldata[current_network_call] = this.behaviour(this.getInputData());
-            return this.current_frame_calldata[current_network_call];
+            this.current_tick_calloutput[current_network_call] = this.behaviour(this.getInputData());
+            this.previous_tick_calloutput = this.current_tick_calloutput;
+            return this.current_tick_calloutput[current_network_call];
         }
         
     }
@@ -638,7 +657,7 @@ class Node {
                     remove_outputcoordsdependant_node = false;
                 }
             }
-            if (remove_outputcoordsdependant_node) {connection[3].outputcoords_dependant_nodes.splice(connection[3].outputcoords_dependant_nodes.indexOf(connection[3]))}
+            if (remove_outputcoordsdependant_node) {connection[3].outputcoords_dependant_nodes.splice(connection[3].outputcoords_dependant_nodes.indexOf(this), 1)}
 
         }
     }
@@ -809,9 +828,13 @@ live_data_nodes = [];
 
 
 window.setInterval(function () {
-    current_frame = !current_frame;
+    current_tick = !current_tick;
     for (x of output_nodes) {
         x.update();
+    }
+    for (x of recursive_nodes_to_calculate) {
+        x.getNodeOutput();
+        recursive_nodes_to_calculate.splice(recursive_nodes_to_calculate.indexOf(x), 1);
     }
 }, 10);
 /*window.setInterval(function () {
