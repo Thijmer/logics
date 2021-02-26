@@ -312,7 +312,6 @@ class Node {
 
         if ((! excludeallnodeslist) || typeof excludeallnodeslist != "boolean") {
             all_nodes.splice(all_nodes.indexOf(this), 1);
-            console.log("Node deleted");
         }
         if (live_data_nodes.includes(this)) {
             live_data_nodes.splice(live_data_nodes.indexOf(this), 1);
