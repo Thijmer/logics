@@ -497,13 +497,14 @@ class Node {
                         if (remove_outputcoordsdependant_node) {connectiontoremove[3].outputcoords_dependant_nodes.splice(connectiontoremove[3].outputcoords_dependant_nodes.indexOf(connectiontoremove[3]))}
                         
                     }
-
+                    this.updateIsRecursive();
+                    this.getInputData(); //To make sure the connectors become green when recursive
                     break;
                 };
             }
         }
 
-        this.updateIsRecursive();
+        
 
     }
 
@@ -584,18 +585,10 @@ class Node {
                 }
                 if (this.recursive && this.input_connections[x][3].recursive) {
                     if (connectorVisualisation) {
-                        if (data) {
-                            this.connector_lines[x].style['stroke-width'] = 4;
-                            this.connector_lines[x].style['stroke'] = "#0f0";
-                            if (connectorglow)
-                                this.connector_lines[x].setAttribute("filter", "url(#glowconnector)");
-                            else
-                                this.connector_lines[x].setAttribute("filter", "");
-                        } else {
-                            this.connector_lines[x].style['stroke-width'] = 2;
-                            this.connector_lines[x].style['stroke'] = "#0a0";
-                            this.connector_lines[x].setAttribute("filter", "");
-                        }
+                        this.connector_lines[x].style['stroke-width'] = 2;
+                        this.connector_lines[x].style['stroke'] = "#0f0";
+                        this.connector_lines[x].setAttribute("filter", "");
+                        
                     }
                 } else {
                     if (connectorVisualisation) {
@@ -881,6 +874,9 @@ window.setInterval(function () {
                     x.update();
                 }
             }
+            var nodedatabackup = []
+            var recursive_nodes_to_calculate_backup = recursive_nodes_to_calculate;
+            recursive_nodes_to_calculate = recursive_nodes_to_calculate_backup;
         }
     }
 
