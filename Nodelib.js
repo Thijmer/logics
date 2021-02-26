@@ -504,7 +504,7 @@ class Node {
                                 remove_outputcoordsdependant_node = false;
                             }
                         }
-                        if (remove_outputcoordsdependant_node) {connectiontoremove[3].outputcoords_dependant_nodes.splice(connectiontoremove[3].outputcoords_dependant_nodes.indexOf(c[2]))}
+                        if (remove_outputcoordsdependant_node) {connectiontoremove[3].outputcoords_dependant_nodes.splice(connectiontoremove[3].outputcoords_dependant_nodes.indexOf(c[2]), 1)}
                         
                     }
                     this.updateIsRecursive();
