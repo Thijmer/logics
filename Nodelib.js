@@ -18,6 +18,8 @@ zoom_factor = 1;
 current_network_call = "main"; //Multiple network states call states will be introduced in the future.
 current_tick = 0;
 
+debug_mode = true;
+
 
 { /*Made by Thijmen Voskuilen. See the about tab on this webpage for contact info.*/
     let width = 15;
@@ -58,6 +60,7 @@ class Node {
         this.html = customHTML;
         this.titlecolor = titlecolor;
         this.title = title;
+        if (debug_mode) {this.title = title+": "+this.id}
         this.inputs = inputs;
         this.outputs = outputs;
         if (behaviour != null) {
@@ -498,7 +501,7 @@ class Node {
                         
                     }
                     this.updateIsRecursive();
-                    this.getInputData(); //To make sure the connectors become green when recursive
+                    c[2].getInputData(); //To make sure the connectors become green when recursive
                     break;
                 };
             }
@@ -561,7 +564,7 @@ class Node {
         for (var x in this.inputs) {
             if (x in this.input_connections) {
                 
-                if (this.recursive == false) {
+                if (!this.recursive) {
                     var data = this.input_connections[x][3].getNodeOutput()[this.input_connections[x][0]];
                     
                 } else {
@@ -857,8 +860,8 @@ window.setInterval(function () {
     recursive_nodes_to_calculate = uniq(recursive_nodes_to_calculate);
     for (x of recursive_nodes_to_calculate) {
         x.getNodeOutput();
-        recursive_nodes_to_calculate.splice(recursive_nodes_to_calculate.indexOf(x), 1);
     }
+    
 
     if (intervalcounter%50 == 0) {
         if (live_data_nodes_update) {

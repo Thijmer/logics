@@ -165,6 +165,32 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
             }, null, coords);
         n.input_elements["input" + 0 + "input"].checked = standards.value0;
         n.input_elements["input" + 1 + "input"].checked = standards.value1;
+    } else if (type=="nand") {
+        if (standards.value0 == null) {standards.value0 = false};
+        if (standards.value1 == null) {standards.value1 = false};
+        var n = new Node("Nand", "#aaa", [["boolean", "input A", true],["boolean", "input B", true]], [["boolean", "output"]], `
+        <svg width="150" height="60" version="1.1" viewBox="0 0 141.11 50.8" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g transform="matrix(.29505 0 0 .30394 -3.0609 -2.4078)">
+         <g font-family="Verdana" stroke-width="1px">
+          <text x="9" y="77.173828" fill="#ffffff" style="line-height:0%" xml:space="preserve"><tspan x="9" y="77.173828" fill="#ffffff" font-size="72px" style="line-height:1.25">A</tspan></text>
+          <text x="9" y="155.17383" fill="#fffffc" style="line-height:0%" xml:space="preserve"><tspan x="9" y="155.17383" fill="#fffffc" font-size="72px" style="line-height:1.25">B</tspan></text>
+          <path id="path1316" d="m72 51h113" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="7.5"/>
+         </g>
+         <use transform="translate(0,78)" width="500" height="180" xlink:href="#path1316"/>
+         <use transform="translate(196.58 39)" width="500" height="180" fill="none" stroke="#ffffff" xlink:href="#path1316"/>
+         <g>
+          <path d="m207 171-71.3-6e-5v-158.5l71.76-2.6e-5c38.898-2.5e-5 70.84 35.504 70.84 79.25s-31.942 79.25-71.3 79.25z" fill-rule="evenodd" stroke="#fff" stroke-linejoin="round" stroke-width="7.5"/>
+          <text x="395.41205" y="109.23633" fill="#fffffe" font-family="Verdana" stroke-width="1px" style="line-height:0%" xml:space="preserve"><tspan x="395.41205" y="109.23633" fill="#fffffe" font-size="56px" style="line-height:1.25">out</tspan></text>
+          <circle transform="translate(12.91 -.35353)" cx="285.32" cy="89.844" r="20.153" fill="#fff" fill-rule="evenodd" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="7.5"/>
+         </g>
+        </g>
+       </svg>
+       `,
+            behaviour=function(input_data) {
+                return([!(input_data[0] && input_data[1] )]);
+            }, null, coords);
+        n.input_elements["input" + 0 + "input"].checked = standards.value0;
+        n.input_elements["input" + 1 + "input"].checked = standards.value1;
     } else if (type == "compare") {
         if (standards.value0 == null) {standards.value0 = 0};
         if (standards.value1 == null) {standards.value1 = 0};
