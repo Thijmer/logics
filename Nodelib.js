@@ -292,6 +292,13 @@ class Node {
             x.childNodeDeleted(this);
         }
 
+        for (x in this.input_connections) {
+            this.input_connections[x][3].outputcoords_dependant_nodes.splice(this.input_connections[x][3].outputcoords_dependant_nodes.indexOf(this), 1)
+        }
+        for (x in this.input_connections) {
+            this.input_connections[x][3].updateIsRecursive();
+        }
+
         if (output_nodes.includes(this)) {
             output_nodes.splice(output_nodes.indexOf(this), 1);
         }
