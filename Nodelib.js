@@ -927,6 +927,8 @@ function EmptyWorkspace() { //To delete all nodes and reset values.
     all_nodes = [];
     z_index_id = 0;
     node_id = 0;
+    recursive_nodes_to_calculate_working = [];
+    recursive_nodes_to_calculate = [];
     
 }
 
