@@ -770,7 +770,6 @@ function loadFile(datastr) {
     EmptyWorkspace(); //Start the new file with an empty workspace
 
     var datastr = datastr.split("\n").slice(1).join("\n");
-    console.log(datastr);
     var saveobject = JSON.parse(datastr);
     try {
         live_data_nodes_update = saveobject.settings.live_data_nodes_update;
