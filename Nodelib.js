@@ -491,7 +491,7 @@ class Node {
         //Loop through all the connectors to see if one is near enough to connect.
         for (let inputs_node_index in input_connectors) { //input_connectors is a global variable containing all the input connectors and their location.
             let inputs_node = input_connectors[inputs_node_index];
-            for (let c of inputs_node) {
+            for (var c of inputs_node) {
                 if (x - 1 < c[1][0] && c[1][0] < x + 1 && y - 1 < c[1][1] && c[1][1] < y + 1) { //Is it near enough to connect? Yes: Proceed with the connection. No? Cancel the connection and act like it never happened.
                     //Tell the node we're connecting to which input from which node (THIS ONE) is connecting, where it is and what its behaviour is. []
                     //Child node means the node the output is from.
@@ -515,12 +515,14 @@ class Node {
                         if (remove_outputcoordsdependant_node) {connectiontoremove[3].outputcoords_dependant_nodes.splice(connectiontoremove[3].outputcoords_dependant_nodes.indexOf(c[2]), 1)}
                         
                     }
-                    this.updateIsRecursive();
-                    c[2].getInputData(); //To make sure the connectors become green when recursive
+                    
                     break;
                 };
             }
         }
+        this.updateIsRecursive();
+        //c[2].update(); //To make sure the connectors become green when recursive
+        /*this.getInputData();*/
 
         
 
@@ -551,9 +553,11 @@ class Node {
             for (let x in this.input_connections) {
                 let inpc = this.input_connections[x];
                 inpc[3].updateIsRecursive();
+                inpc[3].update();
             }
             for (let x of this.outputcoords_dependant_nodes) {
                 x.updateIsRecursive();
+                x.update();
             }
         }
     }
@@ -590,7 +594,7 @@ class Node {
                         
                     }
                     var data = childnodespreviousoutput[this.input_connections[x][0]];
-                    recursive_nodes_to_calculate.push(this.input_connections[x][3])
+                    recursive_nodes_to_calculate.push(this.input_connections[x][3]);
                 }
                 
 
@@ -893,9 +897,6 @@ window.setInterval(function () {
                     x.update();
                 }
             }
-            var nodedatabackup = []
-            var recursive_nodes_to_calculate_backup = recursive_nodes_to_calculate;
-            recursive_nodes_to_calculate = recursive_nodes_to_calculate_backup;
         }
     }
 
