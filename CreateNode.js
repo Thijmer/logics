@@ -685,13 +685,16 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
     }
 
     n.type = type.toLowerCase();
+    if (node_data.previous_tick_calloutput != null) {
+        n.previous_tick_calloutput = node_data.previous_tick_calloutput;
+    }
 }
 
 
 
 
 
-Logics_version = 1.4;
+Logics_version = "v2.0.0";
 project_name = "Logics project";
 
 function makeFile() {
@@ -754,6 +757,7 @@ function makeFile() {
         node_save.coords = [node.node_container.style.left,node.node_container.style.top];
         node_save.node_data = node.node_data;
         node_save.id = x; //ID used for identifiing the node while reconstructing the network.
+        node_save.previous_tick_calloutput = node.previous_tick_calloutput;
         saveobject.nodes.push(node_save);
     }
     var textsave = text+JSON.stringify(saveobject);
@@ -792,11 +796,25 @@ function loadFile(datastr) {
             standards["value"+inpn] = inp;
         }
 
-        if (saveobject.version < 1.2) {
-            node.coords[0] = parseInt(node.coords[0].replace("px", ""))+9000+"px";
-            node.coords[1] = parseInt(node.coords[1].replace("px", ""))+5000+"px";
-            console.log("This is an old document. Changes have been made while loading. If you save the file. it will be updated.");
+        if (typeof saveobject.version == "number") {
+            if (saveobject.version < 1.2) {
+                node.coords[0] = parseInt(node.coords[0].replace("px", ""))+9000+"px";
+                node.coords[1] = parseInt(node.coords[1].replace("px", ""))+5000+"px";
+                console.log("This is an old document. Changes have been made while loading. If you save the file, it will be updated.");
+            }
+        } else {
+            {
+                let versionstr = saveobject.version.substring(1);
+                let versionlist = versionstr.split(".");
+                var release_major = versionlist[0];
+                var release_minor = versionlist[1];
+                var release_patch = versionlist[2];
+            }
         }
+        if (release_major >= 2) {
+            node.node_data.previous_tick_calloutput = node.previous_tick_calloutput;
+        }
+        
 
         createStandardNode(node.type, node.coords, node.node_data, standards) //type, coords, data, standards;
     }
