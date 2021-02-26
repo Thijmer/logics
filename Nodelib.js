@@ -292,18 +292,27 @@ class Node {
             x.childNodeDeleted(this);
         }
 
-        for (x in this.input_connections) {
+        for (let x in this.input_connections) {
             this.input_connections[x][3].outputcoords_dependant_nodes.splice(this.input_connections[x][3].outputcoords_dependant_nodes.indexOf(this), 1)
         }
-        for (x in this.input_connections) {
+        for (let x in this.input_connections) {
             this.input_connections[x][3].updateIsRecursive();
         }
 
         if (output_nodes.includes(this)) {
             output_nodes.splice(output_nodes.indexOf(this), 1);
         }
+
+        if (recursive_nodes_to_calculate.includes(this)) {
+            recursive_nodes_to_calculate.splice(recursive_nodes_to_calculate.indexOf(this), 1);
+        }
+        if (recursive_nodes_to_calculate_working.includes(this)) {
+            recursive_nodes_to_calculate_working.splice(recursive_nodes_to_calculate_working.indexOf(this), 1);
+        }
+
         if ((! excludeallnodeslist) || typeof excludeallnodeslist != "boolean") {
             all_nodes.splice(all_nodes.indexOf(this), 1);
+            console.log("Node deleted");
         }
         if (live_data_nodes.includes(this)) {
             live_data_nodes.splice(live_data_nodes.indexOf(this), 1);
@@ -861,11 +870,12 @@ live_data_nodes = [];
 intervalcounter = 0;
 window.setInterval(function () {
     current_tick = !current_tick;
-    for (x of output_nodes) {
+    for (let x of output_nodes) {
         x.update();
     }
-    recursive_nodes_to_calculate = uniq(recursive_nodes_to_calculate);
-    for (x of recursive_nodes_to_calculate) {
+    recursive_nodes_to_calculate_working = uniq(recursive_nodes_to_calculate);
+    recursive_nodes_to_calculate = []; //The list is emptied so that the next tick starts without any update orders from the previous tick left.
+    for (x of recursive_nodes_to_calculate_working) {
         x.getNodeOutput();
     }
     
