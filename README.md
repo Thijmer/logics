@@ -12,10 +12,18 @@ The data comes in on the left side of the node and comes out on the right side. 
 Input nodes are ment to put variable values into the network. Output nodes are ment to display the value coming out of the network. Operation nodes take data, modify it and pass it on to the next node.
 Zooming in and out and moving the viewport is also possible, allowing for networks much larger than your screen!
 
+# Features
+ - Many nodes available to work with both numbers and booleans.
+ - Saving networks is possible
+ - Unix time node available, which can be used to make some cool flashing lights.
+ - Nodes can feed into themselves (Starting with version 2.0), enabling making recursive networks, which enable you to make cool things such as t flipflops.
+ - Moving the viewport around and zooming enables you to make infinitely big networks.
+
 # Limitations
  - This webapp lets you scroll around and click things on touchscreen devices, but it doesn't let you edit the network or zoom.
  - A node has a fixed number of input/output sockets. An addition node can add just two numbers, and  you have to chain them together if you want to add more numbers.
- - A node can not feed into itself. I'm working on making it possible to let nodes feed into themselves, which could have some cool implications.
+
+
 
 # Nodes in Logics
 ### Input nodes
@@ -40,8 +48,8 @@ Zooming in and out and moving the viewport is also possible, allowing for networ
  - Bits to number (8 Booleans in, one number out)
 
 ### Fourth dimension
- - Memory node
- - Time node
+ - Memory node (1 number (=value to be saved) in, 1 boolean in (control), 1 number out)
+ - Time node (1 number out: [Unix time](https://en.wikipedia.org/wiki/Unix_time))
 
 ### Output nodes
  - Colored light (1 Boolean in)
