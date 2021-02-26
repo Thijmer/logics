@@ -165,6 +165,32 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
             }, null, coords);
         n.input_elements["input" + 0 + "input"].checked = standards.value0;
         n.input_elements["input" + 1 + "input"].checked = standards.value1;
+    } else if (type=="nand") {
+        if (standards.value0 == null) {standards.value0 = false};
+        if (standards.value1 == null) {standards.value1 = false};
+        var n = new Node("Nand", "#aaa", [["boolean", "input A", true],["boolean", "input B", true]], [["boolean", "output"]], `
+        <svg width="150" height="60" version="1.1" viewBox="0 0 141.11 50.8" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g transform="matrix(.29505 0 0 .30394 -3.0609 -2.4078)">
+         <g font-family="Verdana" stroke-width="1px">
+          <text x="9" y="77.173828" fill="#ffffff" style="line-height:0%" xml:space="preserve"><tspan x="9" y="77.173828" fill="#ffffff" font-size="72px" style="line-height:1.25">A</tspan></text>
+          <text x="9" y="155.17383" fill="#fffffc" style="line-height:0%" xml:space="preserve"><tspan x="9" y="155.17383" fill="#fffffc" font-size="72px" style="line-height:1.25">B</tspan></text>
+          <path id="path1316" d="m72 51h113" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="7.5"/>
+         </g>
+         <use transform="translate(0,78)" width="500" height="180" xlink:href="#path1316"/>
+         <use transform="translate(196.58 39)" width="500" height="180" fill="none" stroke="#ffffff" xlink:href="#path1316"/>
+         <g>
+          <path d="m207 171-71.3-6e-5v-158.5l71.76-2.6e-5c38.898-2.5e-5 70.84 35.504 70.84 79.25s-31.942 79.25-71.3 79.25z" fill-rule="evenodd" stroke="#fff" stroke-linejoin="round" stroke-width="7.5"/>
+          <text x="395.41205" y="109.23633" fill="#fffffe" font-family="Verdana" stroke-width="1px" style="line-height:0%" xml:space="preserve"><tspan x="395.41205" y="109.23633" fill="#fffffe" font-size="56px" style="line-height:1.25">out</tspan></text>
+          <circle transform="translate(12.91 -.35353)" cx="285.32" cy="89.844" r="20.153" fill="#fff" fill-rule="evenodd" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="7.5"/>
+         </g>
+        </g>
+       </svg>
+       `,
+            behaviour=function(input_data) {
+                return([!(input_data[0] && input_data[1] )]);
+            }, null, coords);
+        n.input_elements["input" + 0 + "input"].checked = standards.value0;
+        n.input_elements["input" + 1 + "input"].checked = standards.value1;
     } else if (type == "compare") {
         if (standards.value0 == null) {standards.value0 = 0};
         if (standards.value1 == null) {standards.value1 = 0};
@@ -659,13 +685,16 @@ function createStandardNode(type="", coords=null, node_data=null, standards=null
     }
 
     n.type = type.toLowerCase();
+    if (node_data.previous_tick_calloutput != null) {
+        n.previous_tick_calloutput = node_data.previous_tick_calloutput;
+    }
 }
 
 
 
 
 
-Logics_version = 1.4;
+Logics_version = "v2.0.0";
 project_name = "Logics project";
 
 function makeFile() {
@@ -728,6 +757,7 @@ function makeFile() {
         node_save.coords = [node.node_container.style.left,node.node_container.style.top];
         node_save.node_data = node.node_data;
         node_save.id = x; //ID used for identifiing the node while reconstructing the network.
+        node_save.previous_tick_calloutput = node.previous_tick_calloutput;
         saveobject.nodes.push(node_save);
     }
     var textsave = text+JSON.stringify(saveobject);
@@ -740,7 +770,6 @@ function loadFile(datastr) {
     EmptyWorkspace(); //Start the new file with an empty workspace
 
     var datastr = datastr.split("\n").slice(1).join("\n");
-    console.log(datastr);
     var saveobject = JSON.parse(datastr);
     try {
         live_data_nodes_update = saveobject.settings.live_data_nodes_update;
@@ -766,11 +795,23 @@ function loadFile(datastr) {
             standards["value"+inpn] = inp;
         }
 
-        if (saveobject.version < 1.2) {
-            node.coords[0] = parseInt(node.coords[0].replace("px", ""))+9000+"px";
-            node.coords[1] = parseInt(node.coords[1].replace("px", ""))+5000+"px";
-            console.log("This is an old document. Changes have been made while loading. If you save the file. it will be updated.");
+        if (typeof saveobject.version == "number") {
+            if (saveobject.version < 1.2) {
+                node.coords[0] = parseInt(node.coords[0].replace("px", ""))+9000+"px";
+                node.coords[1] = parseInt(node.coords[1].replace("px", ""))+5000+"px";
+                console.log("This is an old document. Changes have been made while loading. If you save the file, it will be updated.");
+            }
+        } else {
+            {
+                let versionstr = saveobject.version.substring(1);
+                let versionlist = versionstr.split(".");
+                var release_major = versionlist[0];
+                var release_minor = versionlist[1];
+                var release_patch = versionlist[2];
+            }
         }
+        
+        
 
         createStandardNode(node.type, node.coords, node.node_data, standards) //type, coords, data, standards;
     }
@@ -788,16 +829,21 @@ function loadFile(datastr) {
                 }              
             }
         }
+        if (release_major >= 2) {
+            node.previous_tick_calloutput = nodedatafromsave.previous_tick_calloutput;
+        }
 
     }
 
 
-    for (let x of all_nodes) {
-        x.getConnectorPositions();
+    for (let node of all_nodes) {
+        node.getConnectorPositions();
     }
 
     for (let node of all_nodes) {
         node.drawInputConnectorLines();
+        node.updateIsRecursive()
+        node.update();
     }
 }
 
