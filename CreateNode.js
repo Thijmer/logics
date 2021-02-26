@@ -810,9 +810,7 @@ function loadFile(datastr) {
                 var release_patch = versionlist[2];
             }
         }
-        if (release_major >= 2) {
-            node.node_data.previous_tick_calloutput = node.previous_tick_calloutput;
-        }
+        
         
 
         createStandardNode(node.type, node.coords, node.node_data, standards) //type, coords, data, standards;
@@ -831,6 +829,9 @@ function loadFile(datastr) {
                 }              
             }
         }
+        if (release_major >= 2) {
+            node.previous_tick_calloutput = nodedatafromsave.previous_tick_calloutput;
+        }
 
     }
 
@@ -842,6 +843,7 @@ function loadFile(datastr) {
     for (let node of all_nodes) {
         node.drawInputConnectorLines();
         node.updateIsRecursive()
+        node.update();
     }
 }
 
