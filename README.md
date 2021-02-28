@@ -5,7 +5,7 @@ Logics is a program that lets you visualize mathematical formulas by building as
 
 ![Logics screenshot trafficlight example](https://thijmer.nl/images/Logics_screenshot_1.png)
 
-# Explaination
+# Explanation
 Nodes make up a network and are resembled as squares with a UI in them. They are connected using wires that transmit data.
 Nodes perform an operation to the data, such as addition or converting a number to binary.
 The data comes in on the left side of the node and comes out on the right side. There are three types of nodes: Input nodes, operation nodes and output nodes.
@@ -18,6 +18,7 @@ Zooming in and out and moving the viewport is also possible, allowing for networ
  - Unix time node available, which can be used to make some cool flashing lights.
  - Nodes can feed into themselves (Starting with version 2.0), enabling making recursive networks, which enable you to make cool things such as t flipflops.
  - Moving the viewport around and zooming enables you to make infinitely big networks.
+ - Connectors lit up if the value going through them is not zero, giving insight in how the network works.
 
 # Limitations
  - This webapp lets you scroll around and click things on touchscreen devices, but it doesn't let you edit the network or zoom.
