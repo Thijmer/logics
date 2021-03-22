@@ -19,17 +19,11 @@ current_network_call = "main"; //Multiple network states call states will be int
 current_tick = 0;
 
 debug_mode = true;
+enable_recursive = true;
 
 
-{ /*Made by Thijmen Voskuilen. See the about tab on this webpage for contact info.*/
-    let width = 15;
-    let space = 2;
-    console.log(`%c${" ".repeat(width)}%cAbout the node system%c${" ".repeat(width)}`, "font-weight: bold; text-decoration: line-through;", "font-weight: bold;",  "font-weight: bold; text-decoration: line-through;");
-    console.log(" ".repeat(space)+"Made by Thijmen Voskuilen");
-    console.log(" ".repeat(space)+"License: You can use the software however you want");
-    console.log(" ".repeat(space)+"but please don't distribute the code.");
-    
-}
+/*Made by Thijmen Voskuilen. See the about tab on this webpage for contact info.*/
+
 
 
 class Node {
@@ -270,10 +264,6 @@ class Node {
             input_connectors[this.id][index] = [index, [this.input_elements["input" + index + "connector_coords"][0], this.input_elements["input" + index + "connector_coords"][1]], this];
         }
     }
-
-    
-
-
 
     
     delete(excludeallnodeslist = false) {
@@ -606,11 +596,15 @@ class Node {
                     inpdatalist.push(0);
                 }
                 if (this.recursive && this.input_connections[x][3].recursive) {
-                    if (connectorVisualisation) {
+                    if (connectorVisualisation && enable_recursive) {
                         this.connector_lines[x].style['stroke-width'] = 2;
                         this.connector_lines[x].style['stroke'] = "#0f0";
                         this.connector_lines[x].setAttribute("filter", "");
                         
+                    } else if (connectorVisualisation && !enable_recursive) {
+                        this.connector_lines[x].style['stroke-width'] = 2;
+                        this.connector_lines[x].style['stroke'] = "#f00";
+                        this.connector_lines[x].setAttribute("filter", "");
                     }
                 } else {
                     if (connectorVisualisation) {
@@ -878,9 +872,12 @@ window.setInterval(function () {
     }
     recursive_nodes_to_calculate_working = uniq(recursive_nodes_to_calculate);
     recursive_nodes_to_calculate = []; //The list is emptied so that the next tick starts without any update orders from the previous tick left.
-    for (x of recursive_nodes_to_calculate_working) {
-        x.getNodeOutput();
+    if (enable_recursive) {
+        for (x of recursive_nodes_to_calculate_working) {
+            x.getNodeOutput();
+        }
     }
+    
     
 
     if (intervalcounter%50 == 0) {

@@ -62,15 +62,24 @@
             <a>Enable line thickness data visualisation: </a><input type="checkbox" name="line thickness" id="datavis" style="left:50%; position: absolute;"><br>
             <a>Nice glow effect in line thickness visualisation</a><input type="checkbox" name="Project name" id="togglegloweffects" style="left:50%; position: absolute;"><br>
             <a>Enable live updating data nodes</a><input type="checkbox" name="Live updating" id="livedata" style="left:50%; position: absolute;"><br>
+            <a>Enable recursive networks</a><input type="checkbox" name="Recursive networks" id="recursive_networks" style="left:50%; position: absolute;"><br>
             <hr>
             <button onclick='
                 project_name = document.getElementById("project_name").value;
                 connectorVisualisation = document.getElementById("datavis").checked;
                 live_data_nodes_update = document.getElementById("livedata").checked;
                 connectorglow = document.getElementById("togglegloweffects").checked;
+                let old_recursive = enable_recursive;
+                enable_recursive = document.getElementById("recursive_networks").checked;
                 if (! connectorVisualisation){
                     for (let x of all_nodes) {
                         x.resetConnectorStyle();
+                    }
+                } else if (enable_recursive != old_recursive) {
+                    for (x of all_nodes) {
+                        if (x.recursive) {
+                            x.update()
+                        }
                     }
                 }
                 document.getElementById("SettingDIV").style.display = "none";
@@ -208,6 +217,7 @@
             <ul>
                 <li>Recursive networks (nodes directly or indirectly connected to themselves) are now a possibility. Connectors in a recursive network are green.</li>
                 <li>Multiple nodes connected to one node only call the network before them once now, which improves performance.</li>
+                <li>Added "nand gate" node.</li> 
             </ul>
 
             <h2>Version 1</h2>
@@ -277,6 +287,7 @@
             document.getElementById("datavis").checked = connectorVisualisation;
             document.getElementById("togglegloweffects").checked = connectorglow;
             document.getElementById("livedata").checked = live_data_nodes_update;
+            document.getElementById("recursive_networks").checked = enable_recursive;
             '>Options</button>
 
 

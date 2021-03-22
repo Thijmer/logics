@@ -707,6 +707,7 @@ function makeFile() {
     saveobject.settings.title = project_name;
     saveobject.settings.connectorVisualisation = connectorVisualisation;
     saveobject.settings.live_data_nodes_update = live_data_nodes_update;
+    saveobject.settings.enable_recursive = enable_recursive;
     saveobject.settings.zoom_factor = zoom_factor;
 
     //Saving the actual stuff
@@ -776,6 +777,7 @@ function loadFile(datastr) {
         project_name = saveobject.settings.title;
         connectorVisualisation = saveobject.settings.connectorVisualisation;
         live_data_nodes_update = saveobject.settings.live_data_nodes_update;
+        enable_recursive = saveobject.settings.enable_recursive;
         if (saveobject.settings.zoom_factor != null) {
             zoom_factor = saveobject.settings.zoom_factor;
         } else {
