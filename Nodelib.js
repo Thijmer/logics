@@ -18,7 +18,7 @@ zoom_factor = 1;
 current_network_call = "main"; //Multiple network states call states will be introduced in the future.
 current_tick = 0;
 
-debug_mode = true;
+debug_mode = false;
 enable_recursive = true;
 
 
