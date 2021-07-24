@@ -70,6 +70,11 @@
   .mainmenubtn:hover {
     background-color: #444;
   }
+
+  .mainmenubtnonlylogo:hover {
+    background-color: #444;
+  }
+
   .mainmenubtnonlylogo {
     font-size: 20px;
     cursor: pointer;

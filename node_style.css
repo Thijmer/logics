@@ -111,34 +111,3 @@
     margin-left: 50px;
   }
   
-  /* Style the button that is used to open the sidepanel */
-  .mainmenubtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #111;
-    color: white;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border: none;
-    height: 50px;
-  }
-  
-  .mainmenubtn:hover {
-    background-color: #444;
-  }
-  .mainmenubtnonlylogo {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #111;
-    color: white;
-    padding: 10px;
-    border: none;
-    height: 50px;
-    width: 50px;
-  }
-  
-  .mainmenubtnonlylogo:hover {
-    background-color: #444;
-  }
